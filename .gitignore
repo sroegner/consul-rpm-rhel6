@@ -1,0 +1,4 @@
+# Created by .gitignore support plugin (hsz.mobi)
+consul-rpm-rhel6.iml
+.idea
+target
