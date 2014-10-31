@@ -12,7 +12,7 @@ echo "Creating consul RPM build file version ${VERSION}"
 
 # fetching consul
 wget --no-check-certificate -q $URL  || {
-    printf '%s\n' "$0: URL or version not found!" >&2
+    echo "URL or version not found!" >&2
     exit 1
 }
 
@@ -32,8 +32,9 @@ fpm -s dir -t rpm \
        -v ${VERSION} \
        -p target \
        --after-install spec/service_install.spec \
+       --after-remove spec/service_uninstall.spec \
        --description "Consul RPM package for RedHat Enterprise Linux 6" \
-       --url "https://github.com/hypoport/consul-rpm-rhel6"
+       --url "https://github.com/hypoport/consul-rpm-rhel6" \
        usr/ etc/
 
 rm -rf target/etc target/usr
