@@ -14,8 +14,6 @@ else
   ARCH=$2
 fi
 
-ZIP=${VERSION}_linux_amd64.zip
-
 case "${ARCH}" in
     i386)
         ZIP=${VERSION}_linux_386.zip
@@ -38,22 +36,26 @@ wget --no-check-certificate -q $URL  || {
     exit 1
 }
 
+# clear target foler
+rm -rf target/*
+
 # create target structure
-rm -rf target/usr target/etc
 mkdir -p target/usr/local/bin
 mkdir -p target/etc/init.d
-cp -r sources/etc/ target/
+cp -r sources/consul/etc/ target/
 
 # unzip
-unzip -qq ${VERSION}_linux_amd64.zip -d target/usr/local/bin/
+unzip -qq ${ZIP} -d target/usr/local/bin/
 rm ${ZIP}
 
 # create rpm
-fpm -s dir -t rpm \
-       -C target -n consul \
+fpm -s dir -t rpm -f \
+       -C target \
+       -n consul \
        -v ${VERSION} \
        -p target \
        -a ${ARCH} \
+       --rpm-ignore-iteration-in-dependencies \
        --after-install spec/service_install.spec \
        --after-remove spec/service_uninstall.spec \
        --description "Consul RPM package for RedHat Enterprise Linux 6" \
