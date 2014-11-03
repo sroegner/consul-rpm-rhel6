@@ -79,6 +79,7 @@ stop() {
 
 restart() {
     stop
+    sleep 1
     start
 }
 
@@ -110,6 +111,7 @@ case "$1" in
         $1
         ;;
     restart)
+        restart
         $1
         ;;
     reload)
