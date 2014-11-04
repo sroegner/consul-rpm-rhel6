@@ -25,6 +25,7 @@ rm -rf target/*
 
 # create target structure
 mkdir -p target/opt/consul-ui/
+cp -r sources/consul-ui/etc/ target/
 
 # unzip
 unzip -qq ${ZIP} -d target/opt/consul-ui/
@@ -42,6 +43,6 @@ fpm -s dir -t rpm -f \
        --rpm-ignore-iteration-in-dependencies \
        --description "Consul-UI RPM package for RedHat Enterprise Linux 6" \
        --url "https://github.com/hypoport/consul-rpm-rhel6" \
-       opt/
+       opt/ etc/
 
 rm -rf target/opt
