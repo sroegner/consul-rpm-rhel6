@@ -1,6 +1,5 @@
 #!/bin/bash
 
-service consul stop > /dev/null 2>&1
 chkconfig --del consul > /dev/null 2>&1
 
 rm -rf /var/consul > /dev/null 2>&1
