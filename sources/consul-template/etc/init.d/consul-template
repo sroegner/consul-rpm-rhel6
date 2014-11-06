@@ -1,0 +1,119 @@
+#!/bin/bash
+#
+# consul        Manage the consul-tepmlate
+#
+# chkconfig:   2345 91 9
+# description: Consul Template queries a Consul instance and updates any number
+# of specified templates on the filesystem. As an added bonus, Consul Template
+# can execute arbitrary commands when a template update completes.
+#
+# processname: consul-template
+# config: /etc/consul-template.conf
+# pidfile: /var/run/consul-template.pid
+
+### BEGIN INIT INFO
+# Provides:       consul-template
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:
+# Should-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: Consul Template queries Consul
+# Description: Consul Template queries a Consul instance
+### END INIT INFO
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+prog="consul-template"
+#user="consul-template"
+user="root"
+exec="/usr/local/bin/$prog"
+conffile="/etc/consul-template/consul-template.hcl"
+pidfile="/var/run/$prog.pid"
+lockfile="/var/lock/subsys/$prog"
+logfile="/var/log/$prog.log"
+
+
+# pull in sysconfig settings
+[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
+
+start() {
+    [ -x $exec ] || exit 5
+    [ -f $conffile ] || exit 6
+
+    umask 077
+
+    touch $logfile $pidfile
+    chown $user:$user $logfile $pidfile
+
+    echo -n $"Starting $prog: "
+
+    daemon \
+        --pidfile=$pidfile \
+        --user=$user \
+        " { $exec -config $conffile >> $logfile 2>&1 & } ; echo \$! >| $pidfile "
+
+    RETVAL=$?
+    echo
+
+    [ $RETVAL -eq 0 ] && touch $lockfile
+
+    return $RETVAL
+}
+
+stop() {
+    pid=`cat "$pidfile"`
+
+    echo -n $"Shutting down $prog: "
+
+    killproc -p $pidfile -t 3 $exec
+    RETVAL=$?
+
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $lockfile2>&1
+    return $RETVAL
+}
+
+rh_status() {
+    status -p "$pidfile" -l $prog $exec
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+    RETVAL=$?
+    return $RETVAL
+}
+
+restart() {
+    stop
+    sleep 1
+    start
+}
+
+case "$1" in
+    start)
+        rh_status_q && exit 0
+        $1
+        ;;
+    stop)
+        rh_status_q || exit 0
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    status)
+        rh_status
+        ;;
+    condrestart|try-restart)
+        rh_status_q || exit 0
+        restart
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart}"
+        exit 2
+esac
+
+exit $?
