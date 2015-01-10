@@ -2,3 +2,5 @@
 consul-rpm-rhel6.iml
 .idea
 target
+.vagrant
+*.swp
