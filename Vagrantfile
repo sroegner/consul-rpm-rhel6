@@ -3,20 +3,17 @@
 
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
+  config.vm.box_check_update = false
 
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
+    #unzip
+    sudo apt-get install -y unzip
+    # rpmbuild
     sudo apt-get install -y rpm
+    # ruby
     sudo apt-get install -y ruby-dev
+    # fpm
     sudo gem install fpm
-    # install ruby?
-    #
-    # install fpm
-    #
-    # install rpmbuild
-    #
   SHELL
 end

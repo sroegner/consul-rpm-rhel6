@@ -24,7 +24,7 @@ An example to create a consul and consul-ui rpm version 0.4.1:
 ```
  ./build-consul-rpm.sh 0.4.1 x86_64
  ./build-consul-ui-rpm.sh 0.4.1 x86_64
- ./build-consul-template.sh 0.2.0 x86_64
+ ./build-consul-template-rpm.sh 0.5.1 x86_64
 ```
 
 The new RPM file is located in the target folder. The target folder will be overridden

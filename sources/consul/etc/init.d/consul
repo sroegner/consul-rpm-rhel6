@@ -69,17 +69,18 @@ start() {
 
 stop() {
     echo -n $"Shutting down $prog: "
-    ## graceful shutdown with SIGINT
-    killproc -p $pidfile $exec -INT
+    ## graceful shutdown with consul leave (better than SIGINT as it waits)
+    /usr/local/bin/consul leave
     RETVAL=$?
     echo
+    #still wait a second until shutdown is really complete
+    sleep 1
     [ $RETVAL -eq 0 ] && rm -f $lockfile2>&1
     return $RETVAL
 }
 
 restart() {
     stop
-    sleep 1
     start
 }
 

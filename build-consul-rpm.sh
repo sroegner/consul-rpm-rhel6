@@ -31,7 +31,7 @@ URL="https://dl.bintray.com/mitchellh/consul/${ZIP}"
 echo $"Creating consul ${ARCH} RPM build file version ${VERSION}"
 
 # fetching consul
-wget --no-check-certificate -q $URL  || {
+curl -k -L -o $ZIP $URL || {
     echo $"URL or version not found!" >&2
     exit 1
 }

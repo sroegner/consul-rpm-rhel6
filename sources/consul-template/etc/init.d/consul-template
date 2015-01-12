@@ -71,6 +71,8 @@ stop() {
     killproc -p $pidfile -t 3 $exec
     RETVAL=$?
 
+    sleep 1
+
     echo
     [ $RETVAL -eq 0 ] && rm -f $lockfile2>&1
     return $RETVAL
@@ -88,7 +90,6 @@ rh_status_q() {
 
 restart() {
     stop
-    sleep 1
     start
 }
 
