@@ -32,7 +32,7 @@ URL="https://github.com/hashicorp/${NAME}/releases/download/v${VERSION}/${ZIP}"
 echo $"Creating ${NAME} RPM build file version ${VERSION}"
 
 # fetching consul
-wget --no-check-certificate -q $URL  || {
+curl -k -L -o $ZIP $URL || {
     echo $"URL or version not found!" >&2
     exit 1
 }
