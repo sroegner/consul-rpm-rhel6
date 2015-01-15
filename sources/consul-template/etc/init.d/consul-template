@@ -30,7 +30,7 @@ prog="consul-template"
 #user="consul-template"
 user="root"
 exec="/usr/local/bin/$prog"
-conffile="/etc/consul-template/consul-template.hcl"
+confdir="/etc/consul-template/conf.d"
 pidfile="/var/run/$prog.pid"
 lockfile="/var/lock/subsys/$prog"
 logfile="/var/log/$prog.log"
@@ -41,7 +41,7 @@ logfile="/var/log/$prog.log"
 
 start() {
     [ -x $exec ] || exit 5
-    [ -f $conffile ] || exit 6
+    [ -f $confdir ] || exit 6
 
     umask 077
 
@@ -53,7 +53,7 @@ start() {
     daemon \
         --pidfile=$pidfile \
         --user=$user \
-        " { $exec -config $conffile >> $logfile 2>&1 & } ; echo \$! >| $pidfile "
+        " { $exec -config $confdir >> $logfile 2>&1 & } ; echo \$! >| $pidfile "
 
     RETVAL=$?
     echo
