@@ -1,7 +1,7 @@
 Consul-rpm-rhel6
 ================
 
-Building a consul RPM package for RedHat Enterprise Linux 6
+Building the 'consul' and 'consul-template' RPM packages for RedHat Enterprise Linux 6.
 
 
 Requirements
