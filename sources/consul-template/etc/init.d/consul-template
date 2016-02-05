@@ -29,7 +29,7 @@
 prog="consul-template"
 #user="consul-template"
 user="root"
-exec="/usr/local/bin/$prog"
+exec="/usr/sbin/$prog"
 confdir="/etc/consul-template/conf.d"
 pidfile="/var/run/$prog.pid"
 lockfile="/var/lock/subsys/$prog"

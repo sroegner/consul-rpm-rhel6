@@ -25,7 +25,7 @@
 
 prog="consul"
 user="consul"
-exec="/usr/local/bin/$prog"
+exec="/usr/sbin/$prog"
 pidfile="/var/run/$prog.pid"
 lockfile="/var/lock/subsys/$prog"
 logfile="/var/log/$prog.log"
@@ -70,7 +70,7 @@ start() {
 stop() {
     echo -n $"Shutting down $prog: "
     ## graceful shutdown with consul leave (better than SIGINT as it waits)
-    /usr/local/bin/consul leave
+    ${exec} leave
     RETVAL=$?
     echo
     #still wait a second until shutdown is really complete
