@@ -4,3 +4,5 @@ consul-rpm-rhel6.iml
 target
 .vagrant
 *.swp
+downloads
+rpms
