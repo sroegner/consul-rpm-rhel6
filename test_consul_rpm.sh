@@ -38,9 +38,13 @@ msg "just uninstall the rpm now"
 $DOCKER exec test-consul-rpm rpm -e consul
 
 msg "post-cleanup checks"
+msg "look for a consul process"
 $DOCKER exec test-consul-rpm ps --no-header -fC consul || echo "no consul process"
+msg "look for a consul user"
 $DOCKER exec test-consul-rpm getent passwd consul || echo "no consul user"
+msg "look for consul in /etc"
 $DOCKER exec test-consul-rpm find /etc -name '*consul*'
+msg "look for consul in /var/lib - there should be state files preserved after rpm uninstall"
 $DOCKER exec test-consul-rpm find /var/lib/consul
 
 msg "removing the test container"

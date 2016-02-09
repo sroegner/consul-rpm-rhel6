@@ -109,18 +109,4 @@ main()
     cp -r sources/consul-ui/etc $BUILDROOT
   fi
 
-  
-  # create rpm
-  fpm -s dir -t rpm -f \
-       -C ${BUILDROOT} \
-       -n ${PKG} \
-       -v ${VERSION} \
-       -p rpms \
-       -d "consul" \
-       --rpm-os "linux" \
-       --after-install spec/${PKG}_postinstall.spec \
-       --before-remove spec/${PKG}_preuninstall.spec \
-       --rpm-ignore-iteration-in-dependencies \
-       --description "${PKG} for RedHat Enterprise Linux 6" \
-       $(ls $BUILDROOT)
 }
