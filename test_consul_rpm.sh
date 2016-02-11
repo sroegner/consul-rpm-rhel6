@@ -14,14 +14,22 @@ $DOCKER rm -f test-consul-rpm &>/dev/null || :
 msg "Starting a basic centos 6 container"
 $DOCKER run -d --name=test-consul-rpm sroegner/centos-base-ssh:6 
 
-rpm=$(ls -1tr rpms/consul-0*rpm|tail -1)
-IP=$($DOCKER inspect --format='{{ .NetworkSettings.IPAddress }}' test-consul-rpm)
-msg "Copy $rpm into the container"
+CONSUL_VERSION=0.6.3
 
-$DOCKER cp $rpm test-consul-rpm:/tmp/
+# make two rpms for upgrade testing
+BUILD_NUMBER=20001 ./build-consul-rpm.sh $CONSUL_VERSION
+BUILD_NUMBER=20002 ./build-consul-rpm.sh $CONSUL_VERSION
+RPM1=rpms/consul-${CONSUL_VERSION}-20001.x86_64.rpm
+RPM2=rpms/consul-${CONSUL_VERSION}-20002.x86_64.rpm
+
+IP=$($DOCKER inspect --format='{{ .NetworkSettings.IPAddress }}' test-consul-rpm)
+msg "Copy RPMs into the container"
+
+$DOCKER cp $RPM1 test-consul-rpm:/tmp/
+$DOCKER cp $RPM2 test-consul-rpm:/tmp/
 
 msg "Install - the service should be added but not enabled or running"
-$DOCKER exec test-consul-rpm rpm -ivh /tmp/$(basename $rpm)
+$DOCKER exec test-consul-rpm rpm -ivh /tmp/$(basename $RPM1)
 $DOCKER exec test-consul-rpm service consul status
 
 msg "Start consul, wait 10 seconds"
@@ -33,6 +41,19 @@ msg "process?"
 $DOCKER exec test-consul-rpm ps -fC consul
 msg "consul service status check"
 curl ${IP}:8500/v1/health/service/consul
+echo
+
+msg "now upgrade the rpm"
+$DOCKER exec test-consul-rpm rpm -Uvh /tmp/$(basename $RPM2)
+$DOCKER exec test-consul-rpm service consul status
+sleep 10
+msg "Running?"
+$DOCKER exec test-consul-rpm service consul status
+msg "process?"
+$DOCKER exec test-consul-rpm ps -fC consul
+msg "consul service status check"
+curl ${IP}:8500/v1/health/service/consul
+echo
 
 msg "just uninstall the rpm now"
 $DOCKER exec test-consul-rpm rpm -e consul
@@ -49,3 +70,5 @@ $DOCKER exec test-consul-rpm find /var/lib/consul
 
 msg "removing the test container"
 $DOCKER rm -f test-consul-rpm
+msg cleanup
+rm -vf $RPM1 $RPM2
